@@ -10,7 +10,7 @@ from paddle.vision.models import resnet50
 from paddle.vision.datasets import Cifar100
 
 # 导入RIFLE模块
-from rifle import RIFLE
+from paddle_rifle.rifle import RIFLE
 
 # 定义数据预处理
 transform = Compose([Resize(224),
