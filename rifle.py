@@ -29,8 +29,8 @@ def rifle(layer, current_epoch, re_init_epoch=5, max_re_num=3):
     for current_epoch in range(EPOCH_NUM):
         for data in data_loader():
             ...
-            # 加入RIFLE策略
-            rifle(layer=model.out_layer, current_epoch=current_epoch, re_init_epoch=5)
+        # 加入RIFLE策略
+        rifle(layer=model.out_layer, current_epoch=current_epoch, re_init_epoch=5)
     """
     if current_epoch % re_init_epoch == 0 and (current_epoch // re_init_epoch) <= max_re_num:
         param_shape = layer.weight.shape
