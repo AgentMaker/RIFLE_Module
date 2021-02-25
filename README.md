@@ -18,7 +18,7 @@ RIFLE优化策略会在训练中随机初始化输出层，让模型更关注深
 ### 在组网中加入RIFLE
 #### 方案一、使用飞桨高层API添加RIFLE策略 - 完整代码详见`demo.py`
 ```
-from paddle_rifle import RIFLE
+from paddle_rifle.rifle import RIFLE
 
 class YourModel:
         def __init__(self):
@@ -38,7 +38,7 @@ class YourModel:
 ```
 #### 方案二、基于飞桨基础API添加RIFLE策略
 ```
-from paddle_rifle import RIFLE
+from paddle_rifle.rifle import RIFLE
 
 class YourModel:
         def __init__(self):
