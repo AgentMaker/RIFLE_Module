@@ -21,7 +21,8 @@ RIFLE优化策略会在训练中随机初始化输出层，让模型更关注深
 #### Callback API
 ```
 class RIFLE(layer, re_init_epoch, max_re_num)
-适用于PaddlePaddle高阶API
+
+Callback API 适用于PaddlePaddle 高阶API
 :param layer: 需要进行RIFLE的输出层
 :param re_init_epoch: 经历多少EPOCH后重新初始化输出层
 :param max_re_num: Layer最大重置次数
@@ -29,7 +30,8 @@ class RIFLE(layer, re_init_epoch, max_re_num)
 #### 常规组网API
 ```
 def rifle(layer, current_epoch, re_init_epoch=5, max_re_num=3)
-RIFLE实现
+
+常规组网API 适用于PaddlePaddle常规训练方式
 :param layer: 需要重置的Layer
 :param current_epoch: 当前的训练轮数
 :param re_init_epoch: 经历多少EPOCH后重新初始化输出层
