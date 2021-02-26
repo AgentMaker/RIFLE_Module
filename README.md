@@ -6,11 +6,13 @@ RIFLE优化策略会在训练中随机初始化输出层，让模型更关注深
 原作论文以及本项目性能等相关详见README底部。
 
 当前模块完成进度：
-- [X] 输出层基于Linear的分类任务
-+ [X] 输出层基于Linear的语义分割任务
-- [ ] 目标检测
+- [X] 分类任务
++ [X] 语义分割任务
+- [X] 目标检测 - Beta
 + [ ] 其它类型任务和输出层
 
+## New!版本更新   
+V0.2 适配非Linear输出层的网络结构，并支持多层使用RIFLE策略！
 ## 使用方法
 ### 安装
 `pip install paddle-rifle`  
@@ -20,27 +22,26 @@ RIFLE优化策略会在训练中随机初始化输出层，让模型更关注深
 ### Paddle-RIFLE API
 #### Callback API
 ```
-class RIFLE(layer, re_init_epoch, max_re_num)
+class RIFLECallback(layer, re_init_epoch, max_re_num)
 
 Callback API 适用于PaddlePaddle 高阶API
-:param layer: 需要进行RIFLE的输出层
+:param layers: 需要进行RIFLE的Layer或需要RIFLE的Layers列表
 :param re_init_epoch: 经历多少EPOCH后重新初始化输出层
 :param max_re_num: Layer最大重置次数
 ```
 #### 常规组网API
 ```
-def rifle(layer, current_epoch, re_init_epoch=5, max_re_num=3)
+def RIFLE(layers, re_init_epoch: int = 5, max_re_num: int = 3)
 
 常规组网API 适用于PaddlePaddle常规训练方式
-:param layer: 需要重置的Layer
-:param current_epoch: 当前的训练轮数
+:param layers: 需要重置的Layer 或 Layer列表
 :param re_init_epoch: 经历多少EPOCH后重新初始化输出层
 :param max_re_num: Layer最大重置次数
 ```
 ### 在组网中加入RIFLE
 #### 方案一、使用飞桨高层API添加RIFLE策略 - 完整代码详见`demo.py`
 ```
-from paddle_rifle.rifle import RIFLE
+from paddle_rifle.rifle import RIFLECallback
 
 class YourModel:
         def __init__(self):
@@ -49,40 +50,38 @@ class YourModel:
             # 定义输出层
             self.out_layer = paddle.nn.Linear(...)
         ...
-    ...
-    # 实例化YourModel
-    model = paddle.Model(YourModel())
-    out_layer = model.out_layer
-    rifle_callback = RIFLE(layer=out_layer, re_init_epoch=5)
-    ...
-    # 使用Hapi进行训练
-    model.fit(..., callbacks=[rifle_callback])
+...
+# 实例化YourModel
+model = paddle.Model(YourModel())
+out_layer = model.out_layer
+rifle_callback = RIFLECallback(layer=out_layer, re_init_epoch=5)
+...
+# 使用Hapi进行训练
+model.fit(..., callbacks=[rifle_callback])
 ```
 #### 方案二、基于飞桨基础API添加RIFLE策略
 ```
 from paddle_rifle.rifle import RIFLE
 
 class YourModel:
-        def __init__(self):
-            super(LeNet, self).__init__():
-            ...
-            # 定义输出层
-            self.out_layer = paddle.nn.Linear(...)
-            ...
+    def __init__(self):
+        super(LeNet, self).__init__():
         ...
+        # 定义输出层
+        self.out_layer = paddle.nn.Linear(...)
+    ...
 ...
 # 实例化YourModel
 model = YourModel()
 ...
+# 实例化RIFLE策略
+rifle = RIFLE(layer=model.out_layer, re_init_epoch=5)
 # 开始训练
 for current_epoch in range(EPOCH_NUM):
     for data in data_loader():
         ...
-        # 训练部分代码
-        ...
-        
     # 加入RIFLE策略
-    rifle(layer=model.out_layer, current_epoch=current_epoch, re_init_epoch=5)
+    rifle.apply(current_epoch=current_epoch)
 ```
 
 ## 关于

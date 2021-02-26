@@ -10,7 +10,7 @@ from paddle.vision.models import resnet50
 from paddle.vision.datasets import Cifar100
 
 # 导入RIFLE模块
-from paddle_rifle.rifle import RIFLE
+from paddle_rifle.rifle import RIFLECallback
 
 # 定义数据预处理
 transform = Compose([Resize(224),
@@ -48,7 +48,7 @@ model = paddle.Model(network=net,
 
 # 实例化可视化Callback和RIFLE Callback
 vdl = paddle.callbacks.VisualDL("./log_RIFLE")
-rifle_cb = RIFLE(fc_layer, 3, 3)
+rifle_cb = RIFLECallback(fc_layer, 3, 3)
 
 sgd = paddle.optimizer.SGD(parameters=model.parameters())
 loss = paddle.nn.loss.CrossEntropyLoss()
