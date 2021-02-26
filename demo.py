@@ -26,7 +26,7 @@ net = resnet50(True, num_classes=100)
 fc_layer = net.fc
 
 """
-# 自定义网络输出层获取示例
+# 自定义网络场景下的输出层获取示例
 
 class Net(paddle.nn.Layer):
     def __init__(self):
@@ -36,9 +36,9 @@ class Net(paddle.nn.Layer):
         self.输出层 = paddle.nn.Linear(...)
     ...
     
-# 加载Net
+# 实例化Net类
 net = Net()
-# 获取输出层
+# 获取输出层成员变量
 输出层 = net.输出层
 """
 
@@ -47,13 +47,13 @@ model = paddle.Model(network=net,
                      labels=paddle.static.InputSpec([1], dtype="int64", name="lab"))
 
 # 实例化可视化Callback和RIFLE Callback
-vdl = paddle.callbacks.VisualDL("./logB")
+vdl = paddle.callbacks.VisualDL("./log_RIFLE")
 rifle_cb = RIFLE(fc_layer, 3, 3)
 
-adam = paddle.optimizer.SGD(parameters=model.parameters())
+sgd = paddle.optimizer.SGD(parameters=model.parameters())
 loss = paddle.nn.loss.CrossEntropyLoss()
 acc = paddle.metric.Accuracy((1, 5))
-model.prepare(adam, loss, acc)
+model.prepare(sgd, loss, acc)
 
 # 开始训练并传入RIFLE Callback
 model.fit(train_data,
