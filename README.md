@@ -1,5 +1,7 @@
 # 可用于PaddlePaddle的RIFLE优化策略模块
-
+![GitHub forks](https://img.shields.io/github/forks/GT-ZhangAcer/RIFLE_Module)
+![GitHub Repo stars](https://img.shields.io/github/stars/GT-ZhangAcer/RIFLE_Module)
+[![Upload Python Package](https://github.com/GT-ZhangAcer/RIFLE_Module/actions/workflows/python-publish.yml/badge.svg)](https://github.com/GT-ZhangAcer/RIFLE_Module/actions/workflows/python-publish.yml)
 ## 简介
 RIFLE优化策略会在训练中随机初始化输出层，让模型更关注深层网络的更新，从而可以在图像分类等任务中取得较优效果。  
 本项目则为可用于PaddlePaddle的RIFLE优化策略封装版，支持普通API与高阶API，并且只需向训练代码中插入一行代码即可使用RIFLE策略。  
