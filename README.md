@@ -22,7 +22,7 @@ V0.2 适配非Linear输出层的网络结构，并支持多层使用RIFLE策略�
 ### Paddle-RIFLE API
 #### Callback API
 ```
-class RIFLECallback(layer, re_init_epoch, max_re_num)
+class RIFLECallback(layers, re_init_epoch, max_re_num)
 
 Callback API 适用于PaddlePaddle 高阶API
 :param layers: 需要进行RIFLE的Layer或需要RIFLE的Layers列表
@@ -31,7 +31,7 @@ Callback API 适用于PaddlePaddle 高阶API
 ```
 #### 常规组网API
 ```
-def RIFLE(layers, re_init_epoch: int = 5, max_re_num: int = 3)
+class RIFLE(layers, re_init_epoch: int = 5, max_re_num: int = 3)
 
 常规组网API 适用于PaddlePaddle常规训练方式
 :param layers: 需要重置的Layer 或 Layer列表
@@ -54,7 +54,7 @@ class YourModel:
 # 实例化YourModel
 model = paddle.Model(YourModel())
 out_layer = model.out_layer
-rifle_callback = RIFLECallback(layer=out_layer, re_init_epoch=5)
+rifle_callback = RIFLECallback(layers=out_layer, re_init_epoch=5)
 ...
 # 使用Hapi进行训练
 model.fit(..., callbacks=[rifle_callback])
@@ -75,7 +75,7 @@ class YourModel:
 model = YourModel()
 ...
 # 实例化RIFLE策略
-rifle = RIFLE(layer=model.out_layer, re_init_epoch=5)
+rifle = RIFLE(layers=model.out_layer, re_init_epoch=5)
 # 开始训练
 for current_epoch in range(EPOCH_NUM):
     for data in data_loader():
