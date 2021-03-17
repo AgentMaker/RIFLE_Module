@@ -1,4 +1,4 @@
-# 可用于PaddlePaddle的RIFLE优化策略模块
+# GT真菜
 ![GitHub forks](https://img.shields.io/github/forks/GT-ZhangAcer/RIFLE_Module)
 ![GitHub Repo stars](https://img.shields.io/github/stars/GT-ZhangAcer/RIFLE_Module)
 [![User](https://static.pepy.tech/personalized-badge/paddle-rifle?period=total&units=international_system&left_color=grey&right_color=orange&left_text=User)](https://pepy.tech/project/paddle-rifle)
