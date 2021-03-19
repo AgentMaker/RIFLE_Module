@@ -10,9 +10,6 @@ import paddle
 class RIFLE:
     """
     RIFLE实现
-    :param layers: 需要重置的Layer 或 Layer列表
-    :param re_init_epoch: 经历多少EPOCH后重新初始化输出层
-    :param max_re_num: Layer最大重置次数
 
     Example:
     class YourModel:
@@ -36,40 +33,64 @@ class RIFLE:
         rifle.apply(current_epoch=current_epoch)
     """
 
-    def __init__(self, layers, re_init_epoch: int = 5, max_re_num: int = 3):
+    def __init__(self,
+                 layers,
+                 re_init_epoch: int = 5,
+                 max_re_num: int = 3,
+                 weight_initializer=None):
+        """
+        :param layers: 需要重置的Layer 或 Layer列表
+        :param re_init_epoch: 经历多少EPOCH后重新初始化输出层
+        :param max_re_num: Layer最大重置次数
+        :param weight_initializer: 权重默认初始化方案（若为None则为原始权重，可为paddle.nn.initializer.XavierNormal()）
+        """
         if not isinstance(layers, list):
             layers = [layers]
         self.layers = layers
         self.re_init_epoch = re_init_epoch
         self.max_re_num = max_re_num
+        self.weight_initializer = weight_initializer
+
         self.CACHE_PARAMS = dict()
 
     def apply(self, current_epoch: int):
         """
         应用RIFLE
         :param current_epoch: 当前遍历过的EPOCH数量
-        :return:
         """
         if current_epoch % self.re_init_epoch == 0 and (current_epoch // self.re_init_epoch) <= self.max_re_num:
-            print_str = f"Initialization successful, {len(self.layers)} layers will apply RIFLE"
+            print_str = f"Initialization successful, {len(self.layers)} group layers will apply RIFLE"
 
-            if current_epoch == 0:
+            if current_epoch == 0 and self.weight_initializer is None:
                 for layer_id, layer in enumerate(self.layers):
-                    self.CACHE_PARAMS[layer_id] = copy.deepcopy(layer.parameters())
+                    for param_id, param in enumerate(layer.parameters()):
+                        if ".w_" in param.name:
+                            self.CACHE_PARAMS[f"w_{layer_id}_{param_id}"] = layer.weight.numpy()
+                        elif ".b_" in param.name:
+                            self.CACHE_PARAMS[f"b_{layer_id}_{param_id}"] = layer.bias.numpy()
             else:
                 for layer_id, layer in enumerate(self.layers):
-                    for param in self.CACHE_PARAMS[layer_id]:
+                    for param_id, param in enumerate(layer.parameters()):
                         if ".w_" in param.name:
-                            layer.weight = layer.create_parameter(shape=layer.weight.shape,
-                                                                  attr=None,
-                                                                  dtype=layer.weight.dtype,
-                                                                  is_bias=False)
+                            if self.weight_initializer is not None:
+                                layer.weight = layer.create_parameter(shape=layer.weight.shape,
+                                                                      attr=None,
+                                                                      dtype=layer.weight.dtype,
+                                                                      is_bias=False,
+                                                                      default_initializer=self.weight_initializer)
+                            else:
+                                layer.weight.set_value(self.CACHE_PARAMS[f"w_{layer_id}_{param_id}"])
+
                         elif ".b_" in param.name:
-                            layer.bias = layer.create_parameter(shape=layer.bias.shape,
-                                                                attr=None,
-                                                                dtype=layer.bias.dtype,
-                                                                is_bias=True)
-                print_str = f"RIFLE: The output layer has been reset in the {current_epoch} epoch!"
+                            if self.weight_initializer is not None:
+                                layer.bias = layer.create_parameter(shape=layer.bias.shape,
+                                                                    attr=None,
+                                                                    dtype=layer.bias.dtype,
+                                                                    is_bias=True)
+                            else:
+                                layer.bias.set_value(self.CACHE_PARAMS[f"b_{layer_id}_{param_id}"])
+
+                print_str = f"RIFLE:  layer has been reset in the {current_epoch} epoch!"
 
             print(f"\033[0;37;41m{print_str}\033[0m")
 
@@ -97,12 +118,17 @@ class RIFLECallback(paddle.callbacks.Callback):
 
     """
 
-    def __init__(self, layers, re_init_epoch: int = 5, max_re_num: int = 3):
+    def __init__(self,
+                 layers,
+                 re_init_epoch: int = 5,
+                 max_re_num: int = 3,
+                 weight_initializer=None):
         """
         RIFLE的CallBack实现
         :param layers: 需要进行RIFLE的输出层
         :param re_init_epoch: 经历多少EPOCH后重新初始化输出层
         :param max_re_num: Layer最大重置次数
+        :param weight_initializer: 权重默认初始化方案（若为None则为原始权重，可为paddle.nn.initializer.XavierNormal()）
         """
         super(RIFLECallback, self).__init__()
         self.re_init_epoch = re_init_epoch
@@ -110,7 +136,8 @@ class RIFLECallback(paddle.callbacks.Callback):
         self.max_re_num = max_re_num
         self._rifle = RIFLE(layers=layers,
                             re_init_epoch=re_init_epoch,
-                            max_re_num=max_re_num)
+                            max_re_num=max_re_num,
+                            weight_initializer=weight_initializer)
 
     def on_epoch_begin(self, epoch, logs=None):
         self._rifle.apply(epoch)

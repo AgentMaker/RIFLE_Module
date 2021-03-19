@@ -48,6 +48,7 @@ model = paddle.Model(network=net,
 
 # 实例化可视化Callback和RIFLE Callback
 vdl = paddle.callbacks.VisualDL("./log_RIFLE")
+# 若需要用新的随机初始化方式则可在下方指定weight_initializer=paddle.nn.initializer.XavierNormal()
 rifle_cb = RIFLECallback(fc_layer, 3, 3)
 
 sgd = paddle.optimizer.SGD(parameters=model.parameters())

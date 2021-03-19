@@ -33,6 +33,7 @@ Callback API 适用于PaddlePaddle 高阶API
 :param layers: 需要进行RIFLE的Layer或需要RIFLE的Layers列表
 :param re_init_epoch: 经历多少EPOCH后重新初始化输出层
 :param max_re_num: Layer最大重置次数
+:param weight_initializer: 权重默认初始化方案（:param weight_initializer: 权重默认初始化方案（若为None则为原始权重，可为paddle.nn.initializer.XavierNormal()））
 ```
 #### 常规组网API
 ```
@@ -42,6 +43,7 @@ class RIFLE(layers, re_init_epoch: int = 5, max_re_num: int = 3)
 :param layers: 需要重置的Layer 或 Layer列表
 :param re_init_epoch: 经历多少EPOCH后重新初始化输出层
 :param max_re_num: Layer最大重置次数
+:param weight_initializer: 权重默认初始化方案（:param weight_initializer: 权重默认初始化方案（若为None则为原始权重，可为paddle.nn.initializer.XavierNormal()））
 ```
 ### 在组网中加入RIFLE
 #### 方案一、使用飞桨高层API添加RIFLE策略 - 完整代码详见`demo.py`
