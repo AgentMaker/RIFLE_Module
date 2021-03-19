@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='paddle-rifle',
-    version='0.21',
+    version='1.0rc',
     packages=["paddle_rifle"],
     url='https://github.com/GT-ZhangAcer/RIFLE_Module',
     license='MIT',

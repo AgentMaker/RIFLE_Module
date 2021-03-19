@@ -16,11 +16,6 @@ from paddle.vision.datasets import MNIST
 # 导入RIFLE模块
 from paddle_rifle.rifle import RIFLECallback
 
-transform = Compose([ToTensor()])
-
-train_data = MNIST(transform=transform)
-test_data = MNIST(mode="test", transform=transform)
-
 
 class Net(nn.Layer):
     def __init__(self, num_classes=10):
@@ -43,24 +38,37 @@ class Net(nn.Layer):
         return x
 
 
-net = Net(num_classes=10)
-fc_layer = net.fc2
+def main(use_init: bool = False):
+    transform = Compose([ToTensor()])
 
-model = paddle.Model(network=net,
-                     inputs=paddle.static.InputSpec([1, 28, 28], name="ipt"),
-                     labels=paddle.static.InputSpec([1], dtype="int64", name="lab"))
+    train_data = MNIST(transform=transform)
+    test_data = MNIST(mode="test", transform=transform)
 
-rifle_cb = RIFLECallback(fc_layer, 1, 3, weight_initializer=paddle.nn.initializer.XavierNormal())
+    net = Net(num_classes=10)
+    fc_layer = net.fc2
 
-sgd = paddle.optimizer.SGD(parameters=model.parameters())
-loss = paddle.nn.loss.CrossEntropyLoss()
-acc = paddle.metric.Accuracy((1, 5))
-model.prepare(sgd, loss, acc)
+    model = paddle.Model(network=net,
+                         inputs=paddle.static.InputSpec([1, 28, 28], name="ipt"),
+                         labels=paddle.static.InputSpec([1], dtype="int64", name="lab"))
 
-# 开始训练并传入RIFLE Callback
-model.fit(train_data,
-          test_data,
-          batch_size=32,
-          epochs=20,
-          log_freq=100,
-          callbacks=[rifle_cb])
+    rifle_cb = RIFLECallback(fc_layer,
+                             re_init_epoch=1,
+                             max_re_num=3,
+                             weight_initializer=paddle.nn.initializer.XavierNormal() if use_init else None)
+
+    sgd = paddle.optimizer.SGD(parameters=model.parameters())
+    loss = paddle.nn.loss.CrossEntropyLoss()
+    acc = paddle.metric.Accuracy((1, 5))
+    model.prepare(sgd, loss, acc)
+
+    # 开始训练并传入RIFLE Callback
+    model.fit(train_data,
+              test_data,
+              batch_size=256,
+              epochs=2,
+              log_freq=10,
+              callbacks=[rifle_cb])
+
+
+if __name__ == '__main__':
+    main()
