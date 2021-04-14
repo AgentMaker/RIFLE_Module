@@ -4,7 +4,7 @@ setup(
     name='paddle-rifle',
     version='1.0rc',
     packages=["paddle_rifle"],
-    url='https://github.com/GT-ZhangAcer/RIFLE_Module',
+    url='https://github.com/AgentMaker/RIFLE_Module',
     license='MIT',
     author='zhanghongji',
     author_email='zhangacer@foxmail.com',
