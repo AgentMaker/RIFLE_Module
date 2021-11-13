@@ -105,3 +105,7 @@ for current_epoch in range(EPOCH_NUM):
 ####  Abstract
 
 >Fine-tuning the deep convolution neural network(CNN) using a pre–trained model helps transfer knowledge learned from larger datasets to the target task. While the accuracy could be largely improved even when the training dataset is small, the transfer learning outcome is usually constrained by the pre-trained model with close CNN weights (Liu et al., 2019), as the backpropagation here brings smaller updates to deeper CNN layers. In this work, we propose RIFLE– a simple yet effective strategy that deepens backpropagation in transfer learning settings, through periodically Re-Initializing the Fully connected LayEr with random scratch during the fine-tuning procedure. RIFLE brings meaningful updates to the weights of deep CNN layers and improves low-level feature learning, while the effects of randomization can be easily converged throughout the overall learning procedure. The experiments show that the use of RIFLE significantly improves deep transfer learning accuracy on a wide range of datasets, outperforming known tricks for the similar purpose, such as Dropout, DropConnect, Stochastic Depth, Disturb Label and Cyclic Learning Rate, under the same settings with 0.5%–2% higher testing accuracy. Empirical cases and ablation studies further indicate RIFLE brings meaningful updates to deep CNN layers with accuracy improved.
+
+## 联系我们
+Email : [agentmaker@163.com]()<br>
+QQ Group : 1005109853
